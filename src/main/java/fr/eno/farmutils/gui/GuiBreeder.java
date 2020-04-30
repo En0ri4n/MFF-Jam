@@ -1,23 +1,19 @@
 package fr.eno.farmutils.gui;
 
-import java.awt.Color;
-
 import fr.eno.farmutils.References;
-import fr.eno.farmutils.container.ContainerMilker;
+import fr.eno.farmutils.container.ContainerBreeder;
 import fr.eno.farmutils.tileentity.TileBreeder;
-import fr.eno.farmutils.tileentity.TileMilker;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
 
 public class GuiBreeder extends GuiContainer
 {
 	public GuiBreeder(InventoryPlayer inventory, TileBreeder tile)
 	{
-		super(new ContainerMilker(inventory, tile));
+		super(new ContainerBreeder(inventory, tile));
 	}
 
 	@Override

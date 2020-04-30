@@ -4,13 +4,14 @@ import java.util.Random;
 
 import fr.eno.farmutils.References;
 import net.minecraft.block.BlockCrops;
+import net.minecraft.block.BlockStem;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -21,7 +22,7 @@ public class FarmingHandler
 	@SubscribeEvent
 	public static void onSeedClicked(BlockEvent.BreakEvent event)
 	{
-		if(event.getState().getBlock() instanceof BlockCrops && !event.getWorld().isRemote && event.getPlayer().getHeldItemMainhand().getItem() instanceof ItemHoe)
+		if(event.getState().getBlock() instanceof IPlantable && !(event.getState().getBlock() instanceof BlockStem) && !event.getWorld().isRemote && event.getPlayer().getHeldItemMainhand().getItem() instanceof ItemHoe)
 		{
 			event.setCanceled(true);
 			

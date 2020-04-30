@@ -9,7 +9,6 @@ import net.minecraft.item.ItemBlock;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 
 @Mod.EventBusSubscriber(modid = References.MOD_ID)
@@ -23,15 +22,16 @@ public class InitItems
 		reg.register(getItem(InitBlocks.MILKER));
 		reg.register(getItem(InitBlocks.BREEDER));
 		reg.register(getItem(InitBlocks.BETTER_THAN_WATER_BLOCK));
+		reg.register(getItem(InitBlocks.CHARGER));
 	}
 	
 	private static ItemBlock getItem(Block block)
 	{
 		ItemBlock item = new ItemBlockBasic(block);
-		item.setCreativeTab(Tabs.BLOCKS);
 		return item;
 	}
 	
+	@SuppressWarnings("unused")
 	private static Item getItem(Item item)
 	{
 		item.setCreativeTab(Tabs.ITEMS);

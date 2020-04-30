@@ -1,23 +1,22 @@
 package fr.eno.farmutils.container;
 
+import fr.eno.farmutils.tileentity.TileCharger;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
-public class ContainerBreeder extends Container
+public class ContainerCharger extends Container
 {
-    private final IInventory breederInventory;
+	private final IInventory chargerInventory;
 
-    public ContainerBreeder(IInventory playerInventory, IInventory breederInventory)
+    public ContainerCharger(IInventory playerInventory, TileCharger chargerInventory)
     {
-        this.breederInventory = breederInventory;
+        this.chargerInventory = chargerInventory;
 
-        for (int i = 0; i < 9; ++i)
-        {
-        	this.addSlotToContainer(new Slot(breederInventory, i, 26 + i * 18, 35 + i * 18));
-        }
+        this.addSlotToContainer(new Slot(chargerInventory, 0, 46 + 7, 27 + 7));
+        this.addSlotToContainer(new Slot(chargerInventory, 1, 111 + 7, 27 + 7));
 
         for (int k = 0; k < 3; ++k)
         {
@@ -39,7 +38,7 @@ public class ContainerBreeder extends Container
     @Override
     public boolean canInteractWith(EntityPlayer playerIn)
     {
-        return this.breederInventory.isUsableByPlayer(playerIn);
+        return this.chargerInventory.isUsableByPlayer(playerIn);
     }
 
     /**

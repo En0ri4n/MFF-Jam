@@ -7,7 +7,6 @@ import javax.annotation.Nullable;
 import fr.eno.farmutils.FarmingUtilities;
 import fr.eno.farmutils.References;
 import fr.eno.farmutils.tileentity.TileBreeder;
-import fr.eno.farmutils.tileentity.TileMilker;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;

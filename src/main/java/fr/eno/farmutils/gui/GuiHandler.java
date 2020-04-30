@@ -1,8 +1,10 @@
 package fr.eno.farmutils.gui;
 
 import fr.eno.farmutils.container.ContainerBreeder;
+import fr.eno.farmutils.container.ContainerCharger;
 import fr.eno.farmutils.container.ContainerMilker;
 import fr.eno.farmutils.tileentity.TileBreeder;
+import fr.eno.farmutils.tileentity.TileCharger;
 import fr.eno.farmutils.tileentity.TileMilker;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -28,6 +30,11 @@ public class GuiHandler implements IGuiHandler
 			{
 				return new GuiBreeder(player.inventory, ((TileBreeder)tile));
 			}
+			
+			if(tile instanceof TileCharger)
+			{
+				return new GuiCharger(player.inventory, (TileCharger) tile);
+			}
 		}
 		
 		return null;
@@ -48,6 +55,11 @@ public class GuiHandler implements IGuiHandler
 			if(tile instanceof TileBreeder)
 			{
 				return new ContainerBreeder(player.inventory, (TileBreeder) tile);
+			}
+			
+			if(tile instanceof TileCharger)
+			{
+				return new ContainerCharger(player.inventory, (TileCharger) tile);
 			}
 		}
 		return null;
