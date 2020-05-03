@@ -92,12 +92,16 @@ public class TileMilker extends TileEntityLockable implements ITickable, ISidedI
 			
 			if(hasBucket)
 			{
-				boolean flag = this.addItemInOutput(new ItemStack(Items.MILK_BUCKET));
-				if(flag && this.extractEnergy(100, false) == 100)
+				if(this.extractEnergy(100, false) == 100)
 				{
-					this.getStackInSlot(slotBucket).shrink(1);
+					boolean flag = this.addItemInOutput(new ItemStack(Items.MILK_BUCKET));
 					
-					this.getWorld().playSound((double) getPos().getX(), (double) getPos().getY(), (double) getPos().getZ(), SoundEvents.ENTITY_COW_MILK, SoundCategory.AMBIENT, 100, 1, false);
+					if(flag)
+					{
+						this.getStackInSlot(slotBucket).shrink(1);
+						
+						this.getWorld().playSound((double) getPos().getX(), (double) getPos().getY(), (double) getPos().getZ(), SoundEvents.ENTITY_COW_MILK, SoundCategory.AMBIENT, 100, 1, false);
+					}
 				}
 			}
 		}

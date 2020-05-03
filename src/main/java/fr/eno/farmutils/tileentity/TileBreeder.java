@@ -61,9 +61,7 @@ public class TileBreeder extends TileEntityLockable implements ITickable, ISided
 
 	@Override
 	public void update()
-	{
-		doBreed = true;
-		
+	{		
 		tick++;
 		
 		if(this.getWorld().canBlockSeeSky(this.getPos()) && !this.getWorld().isRainingAt(getPos()) && this.getWorld().isDaytime() && !this.getWorld().isThundering())
@@ -92,7 +90,7 @@ public class TileBreeder extends TileEntityLockable implements ITickable, ISided
 	public void breedAnimal()
 	{
 		for(int i = 0; i < 2; i++)
-		if(isAnimalPresentInRange() && !world.isRemote)
+		if(isAnimalPresentInRange() && !world.isRemote && doBreed)
 		{
 			EntityAnimal animal = getRandomAnimal();
 			
@@ -118,9 +116,9 @@ public class TileBreeder extends TileEntityLockable implements ITickable, ISided
 			
 			if(hasBreedItem && !item.isEmpty())
 			{				
-				this.getStackInSlot(slotBreed).shrink(1);
-				
+				this.getStackInSlot(slotBreed).shrink(1);				
 				animal.setInLove((EntityPlayer) null);
+				doBreed = false;
 			}
 		}
 	}
@@ -128,7 +126,7 @@ public class TileBreeder extends TileEntityLockable implements ITickable, ISided
 	private EntityAnimal getRandomAnimal()
 	{
 		List<EntityAnimal> list = this.getAnimalInRange();
-		return list.get(new Random().nextInt(list.size() - 1));
+		return list.get(new Random().nextInt(list.size()));
 	}
 	
 	private List<net.minecraft.item.Item> getBreedingItems(EntityAnimal entity)
@@ -155,8 +153,8 @@ public class TileBreeder extends TileEntityLockable implements ITickable, ISided
 	
 	private List<EntityAnimal> getAnimalInRange()
 	{		
-		BlockPos start = this.getPos().up(2).east(2).north(2);
-		BlockPos end = this.getPos().west(2).south(2).up(2);
+		BlockPos start = this.getPos().east().north();
+		BlockPos end = this.getPos().west().south().up(2);
 		
 		return this.getWorld().getEntitiesWithinAABB(EntityAnimal.class, new AxisAlignedBB(start, end));
 	}

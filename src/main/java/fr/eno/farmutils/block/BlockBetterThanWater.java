@@ -1,5 +1,8 @@
 package fr.eno.farmutils.block;
 
+import java.util.Arrays;
+import java.util.List;
+
 import fr.eno.farmutils.References;
 import fr.eno.farmutils.Tabs;
 import fr.eno.farmutils.tileentity.TileBetterThanWater;
@@ -7,6 +10,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -23,6 +28,13 @@ public class BlockBetterThanWater extends Block
 		this.setRegistryName(References.MOD_ID, "better_than_water_block");
 		this.setTranslationKey(this.getRegistryName().getPath());
 		this.setCreativeTab(Tabs.BLOCKS);
+	}
+	
+	@Override
+	public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn)
+	{
+		tooltip.addAll(Arrays.asList("With this block, you can have a plantation of 5x5",
+				"Combined with sprinkler for optimal performance"));
 	}
 	
 	@Override

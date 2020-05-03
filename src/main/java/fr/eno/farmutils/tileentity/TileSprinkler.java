@@ -15,7 +15,6 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.IPlantable;
 
 public class TileSprinkler extends TileEntity implements ITickable
 {
@@ -47,14 +46,13 @@ public class TileSprinkler extends TileEntity implements ITickable
 				tick = 0;
 			}
 			
-			if(tick == 5)
-			{
-				BlockPos pos = new BlockPos(0, 0, 0);
-				
-				pos = getRandomCropsPos();
-				
-				this.getWorld().scheduleUpdate(pos, this.getWorld().getBlockState(pos).getBlock(), 2);
-			}
+			BlockPos pos = new BlockPos(0, 0, 0);
+			
+			pos = getRandomCropsPos();
+			
+			if(world.getBlockState(pos).getBlock() instanceof BlockCrops || world.getBlockState(pos).getBlock() instanceof BlockStem)
+				if(world.getBlockState(pos).getValue(BlockCrops.AGE) < 7)
+					this.getWorld().scheduleUpdate(pos, this.getWorld().getBlockState(pos).getBlock(), 2);
 		}		
 	}
 	
@@ -75,7 +73,8 @@ public class TileSprinkler extends TileEntity implements ITickable
 		
 		for(BlockPos positions : this.getCropsPositions())
 		{
-			if(this.getWorld().getBlockState(positions.up()).getBlock() instanceof IPlantable)
+			Block block = this.getWorld().getBlockState(positions.up()).getBlock();
+			if(block instanceof BlockCrops || block instanceof BlockStem)
 			{
 				pos.add(positions.up());
 			}

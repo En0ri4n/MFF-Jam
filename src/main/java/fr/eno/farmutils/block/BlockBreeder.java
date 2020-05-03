@@ -2,6 +2,7 @@ package fr.eno.farmutils.block;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import javax.annotation.Nullable;
 
@@ -42,7 +43,8 @@ public class BlockBreeder extends Block
 	public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn)
 	{
 		tooltip.addAll(Arrays.asList("Place this block below an open area of 5x5x2 block",
-				"Detect automatically breeding items for animals"));
+				"Detect automatically breeding items for animals",
+				"And breed animals automatically with a redstone impulsion"));
 	}
 	
 	@Override
@@ -74,8 +76,18 @@ public class BlockBreeder extends Block
 	@Override
 	public int tickRate(World worldIn)
     {
-        return 3;
+        return 20;
     }
+	
+	@Override
+	public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
+	{
+		if(!worldIn.isRemote && worldIn.canSeeSky(pos))
+        {
+        	TileBreeder breeder = (TileBreeder) worldIn.getTileEntity(pos);        	
+        	breeder.activeBreed();
+        }
+	}
 	
 	@Override
 	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos)
@@ -85,12 +97,7 @@ public class BlockBreeder extends Block
 
         if (flag && !flag1)
         {
-        	if(!worldIn.isRemote && worldIn.canSeeSky(pos))
-            {
-            	TileBreeder breeder = (TileBreeder) worldIn.getTileEntity(pos);
-            	
-            	breeder.activeBreed();
-            }
+        	worldIn.scheduleUpdate(pos, this, 20);
             worldIn.setBlockState(pos, state.withProperty(TRIGGERED, Boolean.valueOf(true)), 4);
         }
         else if (!flag && flag1)

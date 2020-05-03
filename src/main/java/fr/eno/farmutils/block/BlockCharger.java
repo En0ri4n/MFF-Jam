@@ -1,5 +1,8 @@
 package fr.eno.farmutils.block;
 
+import java.util.Arrays;
+import java.util.List;
+
 import fr.eno.farmutils.FarmingUtilities;
 import fr.eno.farmutils.References;
 import fr.eno.farmutils.Tabs;
@@ -7,7 +10,9 @@ import fr.eno.farmutils.tileentity.TileCharger;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -22,6 +27,13 @@ public class BlockCharger extends Block
 		this.setRegistryName(References.MOD_ID, "charger");
 		this.setTranslationKey(this.getRegistryName().getPath());
 		this.setCreativeTab(Tabs.BLOCKS);
+	}
+	
+	@Override
+	public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn)
+	{
+		tooltip.addAll(Arrays.asList("With this block, you can recharge your powered tools",
+				"PS: only hoe is implemented and the energy is photons from sun"));
 	}
 	
 	@Override

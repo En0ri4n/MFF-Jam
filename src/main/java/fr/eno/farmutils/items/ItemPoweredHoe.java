@@ -1,6 +1,7 @@
 package fr.eno.farmutils.items;
 
 import fr.eno.farmutils.References;
+import fr.eno.farmutils.Tabs;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDirt;
 import net.minecraft.block.state.IBlockState;
@@ -22,6 +23,7 @@ public class ItemPoweredHoe extends ItemEnergyStorage
 		super(200, 2, 0);
 		this.setRegistryName(References.MOD_ID, "powered_hoe");
 		this.setTranslationKey(this.getRegistryName().getPath());
+		this.setCreativeTab(Tabs.ITEMS);
 	}
 
 	@Override

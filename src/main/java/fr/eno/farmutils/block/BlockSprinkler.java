@@ -33,7 +33,7 @@ public class BlockSprinkler extends Block
 	@Override
 	public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn)
 	{
-		tooltip.addAll(Arrays.asList("Place this block on a better than water block for increase speed of crops around"));
+		tooltip.addAll(Arrays.asList("Place this block on a better than water block for increase speed of crops in 5x5 area"));
 	}
 	
 	@Override
