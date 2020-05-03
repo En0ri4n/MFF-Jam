@@ -1,4 +1,4 @@
-package fr.eno.farmutils;
+package fr.eno.farmutils.ai;
 
 import fr.eno.farmutils.block.BlockFeeder;
 import fr.eno.farmutils.tileentity.TileFeeder;

@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Random;
 
 import fr.eno.farmutils.References;
-import fr.eno.farmutils.Tabs;
+import fr.eno.farmutils.utils.Tabs;
 import net.minecraft.block.BlockCrops;
 import net.minecraft.block.BlockStem;
 import net.minecraft.block.material.Material;
@@ -56,11 +56,12 @@ public class ItemWateringCan extends Item
 	@Override
 	public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
 	{
-		if(world.getBlockState(pos).getBlock() instanceof BlockCrops || world.getBlockState(pos).getBlock() instanceof BlockStem)
+		if(!world.isRemote)
+		if(world.getBlockState(pos).getBlock() instanceof BlockCrops ||world.getBlockState(pos).getBlock() instanceof BlockStem)
 		{
 			ItemStack stack = player.getHeldItem(hand);
 			
-			if(world.getBlockState(pos).getMaterial() == Material.WATER || player.capabilities.isCreativeMode)
+			if(world.getBlockState(player.getPosition()).getMaterial() == Material.WATER || player.capabilities.isCreativeMode)
 			{
 				growPlant(world, pos);
 				
@@ -84,6 +85,7 @@ public class ItemWateringCan extends Item
 				if(stack.getTagCompound().getInteger("WaterLevel") <= 0)
 				{
 					player.sendMessage(new TextComponentString(TextFormatting.RED + "You didn't have water in your watering can !"));
+					return EnumActionResult.FAIL;
 				}
 				
 				growPlant(world, pos);

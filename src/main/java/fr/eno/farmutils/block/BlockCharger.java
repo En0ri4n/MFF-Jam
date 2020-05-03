@@ -5,8 +5,8 @@ import java.util.List;
 
 import fr.eno.farmutils.FarmingUtilities;
 import fr.eno.farmutils.References;
-import fr.eno.farmutils.Tabs;
 import fr.eno.farmutils.tileentity.TileCharger;
+import fr.eno.farmutils.utils.Tabs;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;

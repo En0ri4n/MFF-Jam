@@ -1,7 +1,7 @@
 package fr.eno.farmutils.items;
 
 import fr.eno.farmutils.References;
-import fr.eno.farmutils.Tabs;
+import fr.eno.farmutils.utils.Tabs;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemBlock;
 

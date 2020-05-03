@@ -1,13 +1,20 @@
+language.name=English
+language.region=United States
+language.code=en_us
+
 itemGroup.farmutils.blocks=Farming Utilities Blocks
 itemGroup.farmutils.items=Farming Utilities Items
+
 farmutils.title.charger=Charger
 farmutils.title.breeder=Breeder
 farmutils.title.feeder=Feeder
 farmutils.title.milker=Milker
+
 tile.charger.name=Charger
 tile.breeder.name=Breeder
 tile.feeder.name=Feeder
 tile.milker.name=Milker
 tile.sprinkler.name=Sprinkler
+
 item.powered_hoe.name=Powered Hoe
 item.watering_can.name=Watering Can

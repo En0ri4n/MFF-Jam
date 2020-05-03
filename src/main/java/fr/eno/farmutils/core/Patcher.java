@@ -1,6 +1,6 @@
 package fr.eno.farmutils.core;
 
-import fr.eno.farmutils.EntityAIMoveToFeeder;
+import fr.eno.farmutils.ai.EntityAIMoveToFeeder;
 import net.minecraft.entity.passive.EntityAnimal;
 
 public class Patcher

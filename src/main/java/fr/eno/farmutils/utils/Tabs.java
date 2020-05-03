@@ -1,8 +1,8 @@
-package fr.eno.farmutils;
+package fr.eno.farmutils.utils;
 
+import fr.eno.farmutils.init.InitBlocks;
+import fr.eno.farmutils.init.InitItems;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
 public class Tabs
@@ -12,7 +12,7 @@ public class Tabs
 		@Override
 		public ItemStack createIcon()
 		{
-			return new ItemStack(Blocks.COBBLESTONE);
+			return new ItemStack(InitBlocks.MILKER);
 		}
 	};
 	
@@ -21,7 +21,7 @@ public class Tabs
 		@Override
 		public ItemStack createIcon()
 		{
-			return new ItemStack(Items.WOODEN_HOE);
+			return new ItemStack(InitItems.POWERED_HOE);
 		}
 	};
 }
