@@ -1,9 +1,12 @@
 package fr.eno.farmutils.init;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import fr.eno.farmutils.References;
-import fr.eno.farmutils.Tabs;
 import fr.eno.farmutils.items.ItemBlockBasic;
-import net.minecraft.block.Block;
+import fr.eno.farmutils.items.ItemWateringCan;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraftforge.event.RegistryEvent;
@@ -14,28 +17,35 @@ import net.minecraftforge.registries.IForgeRegistry;
 @Mod.EventBusSubscriber(modid = References.MOD_ID)
 public class InitItems
 {
+	public static final List<Item> ITEMS = new ArrayList<Item>();
+	
+	public static final ItemBlock MILKER = new ItemBlockBasic(InitBlocks.MILKER);
+	public static final ItemBlock BREEDER = new ItemBlockBasic(InitBlocks.BREEDER);
+	public static final ItemBlock BETTER_THAN_WATER_BLOCK = new ItemBlockBasic(InitBlocks.BETTER_THAN_WATER_BLOCK);
+	public static final ItemBlock CHARGER = new ItemBlockBasic(InitBlocks.CHARGER);
+	public static final ItemBlock FEEDER = new ItemBlockBasic(InitBlocks.FEEDER);
+	public static final Item WATERING_CAN = new ItemWateringCan();
+	
+	private static void preInit()
+	{
+		ITEMS.addAll(Arrays.asList(MILKER,
+				BREEDER,
+				BETTER_THAN_WATER_BLOCK,
+				CHARGER,
+				FEEDER,
+				WATERING_CAN));
+	}
+
 	@SubscribeEvent
 	public static void registerBlocks(RegistryEvent.Register<Item> event)
 	{
 		IForgeRegistry<Item> reg = event.getRegistry();
 		
-		reg.register(getItem(InitBlocks.MILKER));
-		reg.register(getItem(InitBlocks.BREEDER));
-		reg.register(getItem(InitBlocks.BETTER_THAN_WATER_BLOCK));
-		reg.register(getItem(InitBlocks.CHARGER));
-	}
-	
-	private static ItemBlock getItem(Block block)
-	{
-		ItemBlock item = new ItemBlockBasic(block);
-		return item;
-	}
-	
-	@SuppressWarnings("unused")
-	private static Item getItem(Item item)
-	{
-		item.setCreativeTab(Tabs.ITEMS);
+		preInit();
 		
-		return item;
+		for(Item item : ITEMS)
+		{			
+			reg.register(item);
+		}
 	}
 }

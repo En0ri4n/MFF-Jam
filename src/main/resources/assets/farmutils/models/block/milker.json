@@ -1,5 +1,5 @@
 {
-	"credit": "Made with Blockbench",
+	"parent": "block/cube_all",
 	"textures": {
 		"0": "farmutils:blocks/milker_bottom",
 		"1": "farmutils:blocks/milker_front",

@@ -19,6 +19,7 @@ public class BlockBetterThanWater extends Block
 	{
 		super(Material.WATER);
 		this.setRegistryName(References.MOD_ID, "better_than_water_block");
+		this.setTranslationKey(this.getRegistryName().getPath());
 	}
 	
 	@Override

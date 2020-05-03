@@ -1,5 +1,20 @@
 {
     "variants": {
-        "normal": { "model": "farmutils:block/feeder" }
+        "empty=true,facing=north,left=true": { "model": "farmutils:empty_feeder_left" },
+        "empty=true,facing=north,left=false": { "model": "farmutils:empty_feeder_right" },
+        "empty=true,facing=east,left=true": { "model": "farmutils:empty_feeder_left", "y": 90 },
+        "empty=true,facing=east,left=false": { "model": "farmutils:empty_feeder_right", "y": 90 },
+        "empty=true,facing=south,left=true": { "model": "farmutils:empty_feeder_left", "y": 180 },
+        "empty=true,facing=south,left=false": { "model": "farmutils:empty_feeder_right", "y": 180 },
+        "empty=true,facing=west,left=true": { "model": "farmutils:empty_feeder_left", "y": 270 },
+        "empty=true,facing=west,left=false": { "model": "farmutils:empty_feeder_right", "y": 270 },
+        "empty=false,facing=north,left=true": { "model": "farmutils:feeder_left" },
+        "empty=false,facing=north,left=false": { "model": "farmutils:feeder_right" },
+        "empty=false,facing=east,left=true": { "model": "farmutils:feeder_left", "y": 90 },
+        "empty=false,facing=east,left=false": { "model": "farmutils:feeder_right", "y": 90 },
+        "empty=false,facing=south,left=true": { "model": "farmutils:feeder_left", "y": 180 },
+        "empty=false,facing=south,left=false": { "model": "farmutils:feeder_right", "y": 180 },
+        "empty=false,facing=west,left=true": { "model": "farmutils:feeder_left", "y": 270 },
+        "empty=false,facing=west,left=false": { "model": "farmutils:feeder_right", "y": 270 }
     }
 }

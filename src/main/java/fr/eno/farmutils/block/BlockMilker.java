@@ -29,6 +29,7 @@ public class BlockMilker extends Block
 	{
 		super(Material.GROUND);
 		this.setRegistryName(References.MOD_ID, "milker");
+		this.setTranslationKey(this.getRegistryName().getPath());
 		this.setDefaultState(this.blockState.getBaseState().withProperty(TRIGGERED, Boolean.valueOf(false)));
 	}
 	

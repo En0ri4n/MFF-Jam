@@ -29,6 +29,7 @@ public class BlockBreeder extends Block
 	{
 		super(Material.GROUND);
 		this.setRegistryName(References.MOD_ID, "breeder");
+		this.setTranslationKey(this.getRegistryName().getPath());
 		this.setDefaultState(this.blockState.getBaseState().withProperty(TRIGGERED, Boolean.valueOf(false)));
 	}
 	

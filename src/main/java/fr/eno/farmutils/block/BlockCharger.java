@@ -19,6 +19,7 @@ public class BlockCharger extends Block
 	{
 		super(Material.ROCK);
 		this.setRegistryName(References.MOD_ID, "charger");
+		this.setTranslationKey(this.getRegistryName().getPath());
 	}
 	
 	@Override

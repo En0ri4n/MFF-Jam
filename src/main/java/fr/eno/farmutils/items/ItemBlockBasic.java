@@ -12,5 +12,6 @@ public class ItemBlockBasic extends ItemBlock
 		super(block);
 		this.setRegistryName(References.MOD_ID, block.getRegistryName().getPath());
 		this.setCreativeTab(Tabs.BLOCKS);
+		this.setTranslationKey(block.getRegistryName().getPath());
 	}
 }

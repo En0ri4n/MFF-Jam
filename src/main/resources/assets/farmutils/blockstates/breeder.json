@@ -1,0 +1,6 @@
+{
+    "variants": {
+        "triggered=true": { "model": "farmutils:breeder" },
+        "triggered=false": { "model": "farmutils:breeder" }
+    }
+}

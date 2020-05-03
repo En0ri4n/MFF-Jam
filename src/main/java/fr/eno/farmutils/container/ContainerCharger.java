@@ -1,5 +1,6 @@
 package fr.eno.farmutils.container;
 
+import fr.eno.farmutils.container.slot.SlotOutput;
 import fr.eno.farmutils.tileentity.TileCharger;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -15,8 +16,8 @@ public class ContainerCharger extends Container
     {
         this.chargerInventory = chargerInventory;
 
-        this.addSlotToContainer(new Slot(chargerInventory, 0, 46 + 7, 27 + 7));
-        this.addSlotToContainer(new Slot(chargerInventory, 1, 111 + 7, 27 + 7));
+        this.addSlotToContainer(new Slot(chargerInventory, 0, 46 + 8, 27 + 8));
+        this.addSlotToContainer(new SlotOutput(chargerInventory, 1, 111 + 8, 27 + 8));
 
         for (int k = 0; k < 3; ++k)
         {
@@ -40,51 +41,10 @@ public class ContainerCharger extends Container
     {
         return this.chargerInventory.isUsableByPlayer(playerIn);
     }
-
-    /**
-     * Handle when the stack in slot {@code index} is shift-clicked. Normally this moves the stack between the player
-     * inventory and the other inventory(s).
-     */
+    
     @Override
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int index)
     {
-        ItemStack itemstack = ItemStack.EMPTY;
-        Slot slot = this.inventorySlots.get(index);
-        
-        if (slot != null && slot.getHasStack())
-        {
-            ItemStack itemstack1 = slot.getStack();
-            itemstack = itemstack1.copy();
-
-            if (index < 9)
-            {
-                if (!this.mergeItemStack(itemstack1, 9, 45, true))
-                {
-                    return ItemStack.EMPTY;
-                }
-            }
-            else if (!this.mergeItemStack(itemstack1, 0, 9, false))
-            {
-                return ItemStack.EMPTY;
-            }
-
-            if (itemstack1.isEmpty())
-            {
-                slot.putStack(ItemStack.EMPTY);
-            }
-            else
-            {
-                slot.onSlotChanged();
-            }
-
-            if (itemstack1.getCount() == itemstack.getCount())
-            {
-                return ItemStack.EMPTY;
-            }
-
-            slot.onTake(playerIn, itemstack1);
-        }
-
-        return itemstack;
+        return index == 0 && this.inventorySlots.get(index) != null ? this.inventorySlots.get(index).getStack() : ItemStack.EMPTY;
     }
 }

@@ -64,10 +64,12 @@ public class TileBetterThanWater extends TileEntity implements ITickable
 	private BlockPos getRandomFarmLandPos()
 	{
 		List<BlockPos> list = getFarmsLandPos();
-		int rand = random.nextInt(list.size() - 1);
 		
 		if(!list.isEmpty() && list != null)
+		{
+			int rand = random.nextInt(list.size() - 1);
 			return list.get(rand);
+		}
 		
 		return new MutableBlockPos(0, 0, 0);
 	}

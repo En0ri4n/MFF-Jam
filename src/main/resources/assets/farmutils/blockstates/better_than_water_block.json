@@ -1,0 +1,5 @@
+{
+    "variants": {
+        "normal": { "model": "farmutils:better_than_water_block" }
+    }
+}

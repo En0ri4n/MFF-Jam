@@ -14,16 +14,18 @@ import net.minecraftforge.energy.IEnergyStorage;
 
 public class TileCharger extends TileEntityLockable implements IEnergyStorage, ITickable
 {
-	private int energyStored = 0;
-	private int maxEnergy = 1000;
+	private int energyStored;
+	private int maxEnergy;
 	
-	private NonNullList<ItemStack> stacks = NonNullList.<ItemStack>withSize(9, ItemStack.EMPTY);
+	private NonNullList<ItemStack> stacks = NonNullList.<ItemStack>withSize(2, ItemStack.EMPTY);
 	
 	public TileCharger() {}
 	
 	public TileCharger(World world)
 	{
 		this.setWorld(world);
+		this.maxEnergy = 1000;
+		this.energyStored = 0;
 	}
 	
 	@Override
@@ -50,11 +52,31 @@ public class TileCharger extends TileEntityLockable implements IEnergyStorage, I
 	@Override
 	public void update()
 	{
-		if(this.getWorld().canBlockSeeSky(this.getPos()))
+		if(this.getWorld().canBlockSeeSky(this.getPos()) && !this.getWorld().isRainingAt(getPos()) && this.getWorld().isDaytime() && !this.getWorld().isThundering())
 		{
-			if(energyStored < maxEnergy)
+			if(this.energyStored < this.maxEnergy)
 			{
-				this.energyStored += 2;
+				this.energyStored++;
+			}
+		}
+		
+		if(this.getStackInSlot(0) != null)
+		{
+			if(!this.getStackInSlot(0).isItemDamaged())
+			{
+				ItemStack stack = this.getStackInSlot(0);
+				stack.setItemDamage(0);
+				this.setInventorySlotContents(0, ItemStack.EMPTY);
+				this.setInventorySlotContents(1, stack);
+			}
+			
+			if(energyStored > 0 && this.getStackInSlot(0).isItemDamaged())
+			{
+				int damage = this.getStackInSlot(0).getItemDamage();
+				ItemStack stack = this.getStackInSlot(0);
+				stack.setItemDamage(--damage);
+				this.setInventorySlotContents(0, stack);
+				energyStored -= 2;
 			}
 		}
 	}
@@ -128,7 +150,7 @@ public class TileCharger extends TileEntityLockable implements IEnergyStorage, I
 	@Override
 	public boolean isItemValidForSlot(int index, ItemStack stack)
 	{
-		return true;
+		return stack.isItemStackDamageable() && stack.getItemDamage() > 0;
 	}
 
 	public int getField(int id)

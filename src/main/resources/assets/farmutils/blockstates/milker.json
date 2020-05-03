@@ -1,5 +1,6 @@
 {
     "variants": {
-        "normal": { "model": "farmutils:block/milker" }
+        "triggered=true": { "model": "farmutils:milker" },
+        "triggered=false": { "model": "farmutils:milker" }
     }
 }
