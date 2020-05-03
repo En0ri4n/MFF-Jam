@@ -43,7 +43,6 @@ public class TileBreeder extends TileEntityLockable implements ITickable, ISided
 	
     private NonNullList<ItemStack> stacks = NonNullList.<ItemStack>withSize(9, ItemStack.EMPTY);
 	private String customName;
-    private boolean doBreed;
     
     public TileBreeder() {}
     
@@ -68,11 +67,11 @@ public class TileBreeder extends TileEntityLockable implements ITickable, ISided
 		{
 			if(this.getEnergyStored() < this.getMaxEnergyStored())
 			{
-				this.receiveEnergy(1, false);
+				this.energyStored++;
 			}
 		}
 		
-		if(tick == 10 * 20 && doBreed)
+		if(tick == 10 * 20)
 		{
 			breedAnimal();
 		}
@@ -88,9 +87,8 @@ public class TileBreeder extends TileEntityLockable implements ITickable, ISided
     }
 	
 	public void breedAnimal()
-	{
-		for(int i = 0; i < 2; i++)
-		if(isAnimalPresentInRange() && !world.isRemote && doBreed)
+	{		
+		if(isAnimalPresentInRange() && !world.isRemote)
 		{
 			EntityAnimal animal = getRandomAnimal();
 			
@@ -118,7 +116,6 @@ public class TileBreeder extends TileEntityLockable implements ITickable, ISided
 			{				
 				this.getStackInSlot(slotBreed).shrink(1);				
 				animal.setInLove((EntityPlayer) null);
-				doBreed = false;
 			}
 		}
 	}
@@ -170,11 +167,6 @@ public class TileBreeder extends TileEntityLockable implements ITickable, ISided
 		return false;
 	}
 	
-	public void activeBreed()
-	{
-		this.doBreed = true;
-	}
-	
 	@Override
 	public void readFromNBT(NBTTagCompound compound)
 	{
@@ -185,7 +177,6 @@ public class TileBreeder extends TileEntityLockable implements ITickable, ISided
 		this.maxEnergy = 0;
 		this.energyStored = compound.getInteger("EnergyStored");
 		this.maxEnergy = compound.getInteger("MaxStorage");
-		this.doBreed = compound.getBoolean("doBreed");
 		
 		if(compound.hasKey("CustomName", 8))
 		{
@@ -199,8 +190,7 @@ public class TileBreeder extends TileEntityLockable implements ITickable, ISided
 		super.writeToNBT(compound);		
 		ItemStackHelper.saveAllItems(compound, stacks);
 		compound.setInteger("EnergyStored", this.energyStored);
-		compound.setInteger("MaxStorage", this.maxEnergy);		
-		compound.setBoolean("doBreed", doBreed);
+		compound.setInteger("MaxStorage", this.maxEnergy);
 		
 		if(this.hasCustomName())
 		{
@@ -380,15 +370,23 @@ public class TileBreeder extends TileEntityLockable implements ITickable, ISided
 	@Override
 	public int receiveEnergy(int maxReceive, boolean simulate)
 	{
-		this.energyStored += maxReceive;
-		return this.maxEnergy - this.energyStored < maxReceive ? maxReceive : this.maxEnergy - this.energyStored;
+		if(canReceive(maxReceive))
+		{
+			return maxReceive;
+		}
+		
+		return 0;
 	}
 
 	@Override
 	public int extractEnergy(int maxExtract, boolean simulate)
 	{
-		this.energyStored -= maxExtract;
-		return this.energyStored < maxExtract ? this.energyStored : maxExtract;
+		if(canExtract(maxExtract))
+		{
+			return maxExtract;
+		}
+		
+		return 0;
 	}
 
 	@Override
@@ -402,11 +400,21 @@ public class TileBreeder extends TileEntityLockable implements ITickable, ISided
 	{
 		return this.maxEnergy;
 	}
+	
+	public boolean canExtract(int size)
+	{
+		return this.getEnergyStored() >= size;
+	}
 
 	@Override
 	public boolean canExtract()
 	{
 		return this.energyStored > 0;
+	}
+	
+	public boolean canReceive(int size)
+	{
+		return this.getMaxEnergyStored() >= size + this.getEnergyStored();
 	}
 
 	@Override

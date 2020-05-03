@@ -44,7 +44,7 @@ public class TileBetterThanWater extends TileEntity implements ITickable
 		
 		if(!list.isEmpty() && list != null)
 		{
-			int rand = random.nextInt(list.size() - 1);
+			int rand = random.nextInt(list.size());
 			return list.get(rand);
 		}
 		

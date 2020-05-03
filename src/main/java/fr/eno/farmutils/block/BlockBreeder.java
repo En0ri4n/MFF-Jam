@@ -2,7 +2,6 @@ package fr.eno.farmutils.block;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 import javax.annotation.Nullable;
 
@@ -77,33 +76,6 @@ public class BlockBreeder extends Block
 	public int tickRate(World worldIn)
     {
         return 20;
-    }
-	
-	@Override
-	public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
-	{
-		if(!worldIn.isRemote && worldIn.canSeeSky(pos))
-        {
-        	TileBreeder breeder = (TileBreeder) worldIn.getTileEntity(pos);        	
-        	breeder.activeBreed();
-        }
-	}
-	
-	@Override
-	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos)
-    {
-        boolean flag = worldIn.isBlockPowered(pos) || worldIn.isBlockPowered(pos.up());
-        boolean flag1 = ((Boolean)state.getValue(TRIGGERED)).booleanValue();
-
-        if (flag && !flag1)
-        {
-        	worldIn.scheduleUpdate(pos, this, 20);
-            worldIn.setBlockState(pos, state.withProperty(TRIGGERED, Boolean.valueOf(true)), 4);
-        }
-        else if (!flag && flag1)
-        {
-            worldIn.setBlockState(pos, state.withProperty(TRIGGERED, Boolean.valueOf(false)), 4);
-        }
     }
 	
 	public IBlockState getStateFromMeta(boolean meta)

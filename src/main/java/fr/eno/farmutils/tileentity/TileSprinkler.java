@@ -38,14 +38,7 @@ public class TileSprinkler extends TileEntity implements ITickable
 		
 		if(world.getBlockState(this.getPos().down()).getBlock() instanceof BlockBetterThanWater)
 		{
-			if(tick >= 10)
-			{
-				int value = world.getBlockState(pos).getValue(BlockSprinkler.ROTATION).intValue();
-				this.world.setBlockState(pos, world.getBlockState(pos).withProperty(BlockSprinkler.ROTATION, value == 15 ? 0 : ++value));
-				this.world.spawnParticle(EnumParticleTypes.DRIP_WATER, pos.getX() + 0.5d, pos.up().getY() + 0.5d, pos.getZ() + 0.5d, 0, 0, 0, 10, 100);
-				tick = 0;
-			}
-			
+						
 			BlockPos pos = new BlockPos(0, 0, 0);
 			
 			pos = getRandomCropsPos();
@@ -53,6 +46,15 @@ public class TileSprinkler extends TileEntity implements ITickable
 			if(world.getBlockState(pos).getBlock() instanceof BlockCrops || world.getBlockState(pos).getBlock() instanceof BlockStem)
 				if(world.getBlockState(pos).getValue(BlockCrops.AGE) < 7)
 					this.getWorld().scheduleUpdate(pos, this.getWorld().getBlockState(pos).getBlock(), 2);
+			
+			if(tick >= 10 && world.getBlockState(pos).getBlock() instanceof BlockSprinkler)
+			{
+				int value = world.getBlockState(pos).getValue(BlockSprinkler.ROTATION).intValue();
+				value += 1;
+				this.world.setBlockState(pos, world.getBlockState(pos).withProperty(BlockSprinkler.ROTATION, value == 16 ? 0 : value));
+				this.world.spawnParticle(EnumParticleTypes.DRIP_WATER, pos.getX() + 0.5d, pos.up().getY() + 0.5d, pos.getZ() + 0.5d, 0, 0, 0, 10, 100);
+				tick = 0;
+			}
 		}		
 	}
 	
@@ -61,7 +63,7 @@ public class TileSprinkler extends TileEntity implements ITickable
 		List<BlockPos> list = getCropsPos();
 		
 		if(!list.isEmpty() && list != null)
-			return list.get(random.nextInt(list.size() - 1));
+			return list.get(random.nextInt(list.size()));
 		
 		return new BlockPos(0, 0, 0);
 	}

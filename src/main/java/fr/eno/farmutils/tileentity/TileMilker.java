@@ -60,7 +60,7 @@ public class TileMilker extends TileEntityLockable implements ITickable, ISidedI
 		{
 			if(this.getEnergyStored() < this.getMaxEnergyStored())
 			{
-				this.receiveEnergy(1, false);
+				this.energyStored++;
 			}
 		}
 	}
