@@ -62,6 +62,8 @@ public class TileBreeder extends TileEntityLockable implements ITickable, ISided
 	@Override
 	public void update()
 	{
+		doBreed = true;
+		
 		tick++;
 		
 		if(this.getWorld().canBlockSeeSky(this.getPos()) && !this.getWorld().isRainingAt(getPos()) && this.getWorld().isDaytime() && !this.getWorld().isThundering())
@@ -90,7 +92,7 @@ public class TileBreeder extends TileEntityLockable implements ITickable, ISided
 	public void breedAnimal()
 	{
 		for(int i = 0; i < 2; i++)
-		if(isAnimalPresentInRange())
+		if(isAnimalPresentInRange() && !world.isRemote)
 		{
 			EntityAnimal animal = getRandomAnimal();
 			
@@ -116,10 +118,7 @@ public class TileBreeder extends TileEntityLockable implements ITickable, ISided
 			
 			if(hasBreedItem && !item.isEmpty())
 			{				
-				if(this.getStackInSlot(slotBreed).getCount() > 1)
-					this.setInventorySlotContents(slotBreed, new ItemStack(this.getStackInSlot(slotBreed).getItem(), this.getStackInSlot(slotBreed).getCount() - 1));
-				else
-					this.setInventorySlotContents(slotBreed, ItemStack.EMPTY);
+				this.getStackInSlot(slotBreed).shrink(1);
 				
 				animal.setInLove((EntityPlayer) null);
 			}
