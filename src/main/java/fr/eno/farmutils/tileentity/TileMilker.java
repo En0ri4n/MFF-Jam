@@ -26,18 +26,26 @@ import net.minecraft.util.datafix.walkers.ItemStackDataLists;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.energy.IEnergyStorage;
 
-public class TileMilker extends TileEntityLockable implements ITickable, ISidedInventory
+public class TileMilker extends TileEntityLockable implements ITickable, ISidedInventory, IEnergyStorage
 {
+	private int energyStored;
+	private int maxEnergy;
+	
 	private int[] SLOTS_INPUT = new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8};
 	private int[] SLOTS_OUTPUT = new int[] {9, 10, 11, 12, 13, 14, 15, 16, 17};
 	
     private NonNullList<ItemStack> stacks = NonNullList.<ItemStack>withSize(18, ItemStack.EMPTY);
 	private String customName;
     
+	public TileMilker() {}
+	
 	public TileMilker(World world)
 	{
 		this.setWorld(world);
+		this.energyStored = 0;
+		this.maxEnergy = 1000;
 	}
 	
 	public static void registerFixes(DataFixer fixer)
@@ -47,8 +55,14 @@ public class TileMilker extends TileEntityLockable implements ITickable, ISidedI
 
 	@Override
 	public void update()
-	{
-		
+	{		
+		if(this.getWorld().canBlockSeeSky(this.getPos()) && !this.getWorld().isRainingAt(getPos()) && this.getWorld().isDaytime() && !this.getWorld().isThundering())
+		{
+			if(this.getEnergyStored() < this.getMaxEnergyStored())
+			{
+				this.receiveEnergy(1, false);
+			}
+		}
 	}
 	
 	@Override
@@ -60,7 +74,7 @@ public class TileMilker extends TileEntityLockable implements ITickable, ISidedI
 	public void milkCow()
 	{
 		if(cowPresentInRange())
-		{
+		{			
 			boolean hasBucket = false;
 			int slotBucket = 0;
 			
@@ -79,13 +93,9 @@ public class TileMilker extends TileEntityLockable implements ITickable, ISidedI
 			if(hasBucket)
 			{
 				boolean flag = this.addItemInOutput(new ItemStack(Items.MILK_BUCKET));
-				
-				if(flag)
+				if(flag && this.extractEnergy(100, false) == 100)
 				{
-					if(this.getStackInSlot(slotBucket).getCount() > 1)
-						this.setInventorySlotContents(slotBucket, new ItemStack(this.getStackInSlot(slotBucket).getItem(), this.getStackInSlot(slotBucket).getCount() - 1));
-					else
-						this.setInventorySlotContents(slotBucket, ItemStack.EMPTY);
+					this.getStackInSlot(slotBucket).shrink(1);
 					
 					this.getWorld().playSound((double) getPos().getX(), (double) getPos().getY(), (double) getPos().getZ(), SoundEvents.ENTITY_COW_MILK, SoundCategory.AMBIENT, 100, 1, false);
 				}
@@ -110,11 +120,12 @@ public class TileMilker extends TileEntityLockable implements ITickable, ISidedI
 	}
 	
 	private List<EntityCow> getCowsInRange()
-	{		
-		BlockPos start = this.getPos().up().east(2).north(2);
-		BlockPos end = this.getPos().up().west(2).south(2).up(2);
+	{
+		BlockPos start = this.getPos().up(2).east().north();
+		BlockPos end = this.getPos().west().south();
 		
-		return this.getWorld().getEntitiesWithinAABB(EntityCow.class, new AxisAlignedBB(start, end));
+		List<EntityCow> list = this.getWorld().getEntitiesWithinAABB(EntityCow.class, new AxisAlignedBB(start, end));
+		return list;
 	}
 	
 	private boolean cowPresentInRange()
@@ -134,7 +145,11 @@ public class TileMilker extends TileEntityLockable implements ITickable, ISidedI
 		super.readFromNBT(compound);
 		this.stacks = NonNullList.<ItemStack>withSize(this.getSizeInventory(), ItemStack.EMPTY);
 		ItemStackHelper.loadAllItems(compound, this.stacks);
-
+		this.energyStored = 0;
+		this.maxEnergy = 0;
+		this.energyStored = compound.getInteger("EnergyStored");
+		this.maxEnergy = compound.getInteger("MaxStorage");
+		
 		if(compound.hasKey("CustomName", 8))
 		{
 			this.customName = compound.getString("CustomName");
@@ -144,9 +159,10 @@ public class TileMilker extends TileEntityLockable implements ITickable, ISidedI
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound compound)
 	{
-		super.writeToNBT(compound);
-		
+		super.writeToNBT(compound);		
 		ItemStackHelper.saveAllItems(compound, stacks);
+		compound.setInteger("EnergyStored", this.energyStored);
+		compound.setInteger("MaxStorage", this.maxEnergy);
 		
 		if(this.hasCustomName())
 		{
@@ -246,20 +262,37 @@ public class TileMilker extends TileEntityLockable implements ITickable, ISidedI
 
 	@Override
 	public int getField(int id)
-	{
-		return 0;
-	}
-
-	@Override
-	public void setField(int id, int value)
-	{
-	}
-
-	@Override
-	public int getFieldCount()
-	{
+    {
+        switch (id)
+        {
+            case 0:
+                return this.energyStored;
+            case 1:
+                return this.maxEnergy;                	
+        }
+        
 		return 1;
-	}
+    }
+	
+	@Override
+    public void setField(int id, int value)
+    {
+        switch (id)
+        {
+            case 0:
+                this.energyStored = value;
+                break;
+            case 1:
+                this.maxEnergy = value;
+                break;
+        }
+    }
+    
+    @Override
+    public int getFieldCount()
+    {
+        return 2;
+    }
 
 	@Override
 	public void clear()
@@ -315,5 +348,43 @@ public class TileMilker extends TileEntityLockable implements ITickable, ISidedI
 		}
 		
 		return false;
+	}
+
+	@Override
+	public int receiveEnergy(int maxReceive, boolean simulate)
+	{
+		this.energyStored += maxReceive;
+		return this.maxEnergy - this.energyStored < maxReceive ? maxReceive : this.maxEnergy - this.energyStored;
+	}
+
+	@Override
+	public int extractEnergy(int maxExtract, boolean simulate)
+	{
+		this.energyStored -= maxExtract;
+		return this.energyStored < maxExtract ? this.energyStored : maxExtract;
+	}
+
+	@Override
+	public int getEnergyStored()
+	{
+		return this.energyStored;
+	}
+
+	@Override
+	public int getMaxEnergyStored()
+	{
+		return this.maxEnergy;
+	}
+
+	@Override
+	public boolean canExtract()
+	{
+		return this.energyStored > 0;
+	}
+
+	@Override
+	public boolean canReceive()
+	{
+		return this.energyStored < this.maxEnergy;
 	}
 }

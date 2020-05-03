@@ -1,11 +1,13 @@
 package fr.eno.farmutils.block;
 
-import java.util.Random;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
 import fr.eno.farmutils.FarmingUtilities;
 import fr.eno.farmutils.References;
+import fr.eno.farmutils.Tabs;
 import fr.eno.farmutils.tileentity.TileBreeder;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -13,7 +15,9 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -31,18 +35,15 @@ public class BlockBreeder extends Block
 		this.setRegistryName(References.MOD_ID, "breeder");
 		this.setTranslationKey(this.getRegistryName().getPath());
 		this.setDefaultState(this.blockState.getBaseState().withProperty(TRIGGERED, Boolean.valueOf(false)));
+		this.setCreativeTab(Tabs.BLOCKS);
 	}
 	
 	@Override
-	public void updateTick(World world, BlockPos pos, IBlockState state, Random rand)
-    {
-        if(!world.isRemote && world.canSeeSky(pos))
-        {
-        	TileBreeder breeder = (TileBreeder) world.getTileEntity(pos);
-        	
-        	breeder.activeBreed();
-        }
-    }
+	public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn)
+	{
+		tooltip.addAll(Arrays.asList("Place this block below an open area of 5x5x2 block",
+				"Detect automatically breeding items for animals"));
+	}
 	
 	@Override
 	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
@@ -84,7 +85,12 @@ public class BlockBreeder extends Block
 
         if (flag && !flag1)
         {
-            worldIn.scheduleUpdate(pos, this, this.tickRate(worldIn));
+        	if(!worldIn.isRemote && worldIn.canSeeSky(pos))
+            {
+            	TileBreeder breeder = (TileBreeder) worldIn.getTileEntity(pos);
+            	
+            	breeder.activeBreed();
+            }
             worldIn.setBlockState(pos, state.withProperty(TRIGGERED, Boolean.valueOf(true)), 4);
         }
         else if (!flag && flag1)

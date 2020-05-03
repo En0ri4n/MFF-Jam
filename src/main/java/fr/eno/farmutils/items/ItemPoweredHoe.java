@@ -1,12 +1,12 @@
 package fr.eno.farmutils.items;
 
+import fr.eno.farmutils.References;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDirt;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
@@ -14,16 +14,22 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.energy.IEnergyStorage;
 
-public class ItemPoweredHoe extends Item implements IEnergyStorage
-{
+public class ItemPoweredHoe extends ItemEnergyStorage
+{	
+	public ItemPoweredHoe()
+	{
+		super(200, 2, 0);
+		this.setRegistryName(References.MOD_ID, "powered_hoe");
+		this.setTranslationKey(this.getRegistryName().getPath());
+	}
+
 	@Override
 	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
 	{
 		ItemStack itemstack = player.getHeldItem(hand);
 
-        if (!player.canPlayerEdit(pos.offset(facing), facing, itemstack))
+        if (!player.canPlayerEdit(pos.offset(facing), facing, itemstack) || this.getEnergyStored() < 1)
         {
             return EnumActionResult.FAIL;
         }
@@ -77,48 +83,7 @@ public class ItemPoweredHoe extends Item implements IEnergyStorage
         {
         	world.setBlockState(pos, state, 11);
             stack.damageItem(1, player);
+            this.extractEnergy(1, false);
         }
     }
-
-	@Override
-	public int receiveEnergy(int maxReceive, boolean simulate)
-	{
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int extractEnergy(int maxExtract, boolean simulate)
-	{
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int getEnergyStored()
-	{
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int getMaxEnergyStored()
-	{
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public boolean canExtract()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean canReceive()
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
 }

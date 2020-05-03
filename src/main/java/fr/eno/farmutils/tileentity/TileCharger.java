@@ -1,5 +1,7 @@
 package fr.eno.farmutils.tileentity;
 
+import fr.eno.farmutils.items.ItemEnergyStorage;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -9,6 +11,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityLockable;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.datafix.DataFixer;
+import net.minecraft.util.datafix.FixTypes;
+import net.minecraft.util.datafix.walkers.ItemStackDataLists;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.energy.IEnergyStorage;
 
@@ -28,13 +34,19 @@ public class TileCharger extends TileEntityLockable implements IEnergyStorage, I
 		this.energyStored = 0;
 	}
 	
+	public static void registerFixes(DataFixer fixer)
+    {
+        fixer.registerWalker(FixTypes.BLOCK_ENTITY, new ItemStackDataLists(TileMilker.class, new String[] {"Items"}));
+    }
+	
 	@Override
 	public void readFromNBT(NBTTagCompound compound)
 	{
 		super.readFromNBT(compound);
 		this.stacks = NonNullList.<ItemStack>withSize(this.getSizeInventory(), ItemStack.EMPTY);
 		ItemStackHelper.loadAllItems(compound, this.stacks);
-		
+		this.energyStored = 0;
+		this.maxEnergy = 0;
 		this.energyStored = compound.getInteger("EnergyStored");
 		this.maxEnergy = compound.getInteger("MaxStorage");
 	}
@@ -54,31 +66,40 @@ public class TileCharger extends TileEntityLockable implements IEnergyStorage, I
 	{
 		if(this.getWorld().canBlockSeeSky(this.getPos()) && !this.getWorld().isRainingAt(getPos()) && this.getWorld().isDaytime() && !this.getWorld().isThundering())
 		{
-			if(this.energyStored < this.maxEnergy)
+			if(this.getEnergyStored() < this.getMaxEnergyStored())
 			{
-				this.energyStored++;
+				this.receiveEnergy(1, false);
 			}
 		}
 		
 		if(this.getStackInSlot(0) != null)
 		{
-			if(!this.getStackInSlot(0).isItemDamaged())
+			if(!(this.getStackInSlot(0).getItem() instanceof ItemEnergyStorage))
+				return;
+			
+			ItemStack stack = this.getStackInSlot(0);
+			ItemEnergyStorage item = (ItemEnergyStorage) stack.getItem();
+			
+			if(item.isFullCharged())
 			{
-				ItemStack stack = this.getStackInSlot(0);
-				stack.setItemDamage(0);
 				this.setInventorySlotContents(0, ItemStack.EMPTY);
 				this.setInventorySlotContents(1, stack);
+				return;
 			}
 			
-			if(energyStored > 0 && this.getStackInSlot(0).isItemDamaged())
+			if(this.extractEnergy(2, true) > 0 && !item.isFullCharged())
 			{
-				int damage = this.getStackInSlot(0).getItemDamage();
-				ItemStack stack = this.getStackInSlot(0);
-				stack.setItemDamage(--damage);
-				this.setInventorySlotContents(0, stack);
-				energyStored -= 2;
+				item.receiveEnergy(1, false);
+				this.extractEnergy(2, false);
+				return;
 			}
 		}
+	}
+	
+	@Override
+	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate)
+	{
+		return true;
 	}
 	
 	@Override
@@ -208,12 +229,16 @@ public class TileCharger extends TileEntityLockable implements IEnergyStorage, I
 	@Override
 	public int receiveEnergy(int maxReceive, boolean simulate)
 	{
+		this.energyStored += maxReceive;
 		return this.maxEnergy - this.energyStored < maxReceive ? maxReceive : this.maxEnergy - this.energyStored;
 	}
 
 	@Override
 	public int extractEnergy(int maxExtract, boolean simulate)
 	{
+		if(canExtract(maxExtract))
+			this.energyStored -= maxExtract;
+		
 		return this.energyStored < maxExtract ? this.energyStored : maxExtract;
 	}
 
@@ -228,6 +253,11 @@ public class TileCharger extends TileEntityLockable implements IEnergyStorage, I
 	{
 		return this.maxEnergy;
 	}
+	
+	public boolean canExtract(int energy)
+	{
+		return this.energyStored >= energy;
+	}
 
 	@Override
 	public boolean canExtract()
@@ -240,5 +270,4 @@ public class TileCharger extends TileEntityLockable implements IEnergyStorage, I
 	{
 		return this.energyStored < this.maxEnergy;
 	}
-
 }

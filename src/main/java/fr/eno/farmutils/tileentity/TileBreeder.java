@@ -9,6 +9,7 @@ import fr.eno.farmutils.utils.FacingHelper;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.passive.EntityChicken;
+import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.entity.player.EntityPlayer;
@@ -29,9 +30,13 @@ import net.minecraft.util.datafix.walkers.ItemStackDataLists;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.energy.IEnergyStorage;
 
-public class TileBreeder extends TileEntityLockable implements ITickable, ISidedInventory
+public class TileBreeder extends TileEntityLockable implements ITickable, ISidedInventory, IEnergyStorage
 {
+	private int energyStored;
+	private int maxEnergy;
+	
 	private int tick = 0;
 	
 	private int[] SLOTS_INPUT = new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8};
@@ -40,9 +45,13 @@ public class TileBreeder extends TileEntityLockable implements ITickable, ISided
 	private String customName;
     private boolean doBreed;
     
+    public TileBreeder() {}
+    
 	public TileBreeder(World world)
 	{
 		this.setWorld(world);
+		this.energyStored = 0;
+		this.maxEnergy = 1000;
 	}
 	
 	public static void registerFixes(DataFixer fixer)
@@ -55,12 +64,20 @@ public class TileBreeder extends TileEntityLockable implements ITickable, ISided
 	{
 		tick++;
 		
-		if(tick == 30 * 20 && doBreed)
+		if(this.getWorld().canBlockSeeSky(this.getPos()) && !this.getWorld().isRainingAt(getPos()) && this.getWorld().isDaytime() && !this.getWorld().isThundering())
+		{
+			if(this.getEnergyStored() < this.getMaxEnergyStored())
+			{
+				this.receiveEnergy(1, false);
+			}
+		}
+		
+		if(tick == 10 * 20 && doBreed)
 		{
 			breedAnimal();
 		}
 		
-		if(tick >= 30 * 20)
+		if(tick >= 10 * 20)
 			tick = 0;		
 	}
 	
@@ -72,6 +89,7 @@ public class TileBreeder extends TileEntityLockable implements ITickable, ISided
 	
 	public void breedAnimal()
 	{
+		for(int i = 0; i < 2; i++)
 		if(isAnimalPresentInRange())
 		{
 			EntityAnimal animal = getRandomAnimal();
@@ -124,7 +142,7 @@ public class TileBreeder extends TileEntityLockable implements ITickable, ISided
 			items.add(Items.POTATO);
 			items.add(Items.CARROT);
 		}
-		else if(entity instanceof EntitySheep)
+		else if(entity instanceof EntitySheep || entity instanceof EntityCow)
 		{
 			items.add(Items.WHEAT);
 		}
@@ -138,8 +156,8 @@ public class TileBreeder extends TileEntityLockable implements ITickable, ISided
 	
 	private List<EntityAnimal> getAnimalInRange()
 	{		
-		BlockPos start = this.getPos().up().east(2).north(2);
-		BlockPos end = this.getPos().up().west(2).south(2).up(2);
+		BlockPos start = this.getPos().up(2).east(2).north(2);
+		BlockPos end = this.getPos().west(2).south(2).up(2);
 		
 		return this.getWorld().getEntitiesWithinAABB(EntityAnimal.class, new AxisAlignedBB(start, end));
 	}
@@ -166,7 +184,10 @@ public class TileBreeder extends TileEntityLockable implements ITickable, ISided
 		super.readFromNBT(compound);
 		this.stacks = NonNullList.<ItemStack>withSize(this.getSizeInventory(), ItemStack.EMPTY);
 		ItemStackHelper.loadAllItems(compound, this.stacks);
-		
+		this.energyStored = 0;
+		this.maxEnergy = 0;
+		this.energyStored = compound.getInteger("EnergyStored");
+		this.maxEnergy = compound.getInteger("MaxStorage");
 		this.doBreed = compound.getBoolean("doBreed");
 		
 		if(compound.hasKey("CustomName", 8))
@@ -178,16 +199,17 @@ public class TileBreeder extends TileEntityLockable implements ITickable, ISided
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound compound)
 	{
-		super.writeToNBT(compound);
-		
+		super.writeToNBT(compound);		
 		ItemStackHelper.saveAllItems(compound, stacks);
-		
+		compound.setInteger("EnergyStored", this.energyStored);
+		compound.setInteger("MaxStorage", this.maxEnergy);		
 		compound.setBoolean("doBreed", doBreed);
 		
 		if(this.hasCustomName())
 		{
 			compound.setString("CustomName", this.customName);
 		}
+		
 		return compound;
 	}
 
@@ -279,23 +301,40 @@ public class TileBreeder extends TileEntityLockable implements ITickable, ISided
 	{
 		return true;
 	}
-
+	
 	@Override
 	public int getField(int id)
-	{
-		return 0;
-	}
-
-	@Override
-	public void setField(int id, int value)
-	{
-	}
-
-	@Override
-	public int getFieldCount()
-	{
+    {
+        switch (id)
+        {
+            case 0:
+                return this.energyStored;
+            case 1:
+                return this.maxEnergy;                	
+        }
+        
 		return 1;
-	}
+    }
+	
+	@Override
+    public void setField(int id, int value)
+    {
+        switch (id)
+        {
+            case 0:
+                this.energyStored = value;
+                break;
+            case 1:
+                this.maxEnergy = value;
+                break;
+        }
+    }
+    
+    @Override
+    public int getFieldCount()
+    {
+        return 2;
+    }
 
 	@Override
 	public void clear()
@@ -339,5 +378,43 @@ public class TileBreeder extends TileEntityLockable implements ITickable, ISided
 	public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction)
 	{		
 		return false;
+	}
+
+	@Override
+	public int receiveEnergy(int maxReceive, boolean simulate)
+	{
+		this.energyStored += maxReceive;
+		return this.maxEnergy - this.energyStored < maxReceive ? maxReceive : this.maxEnergy - this.energyStored;
+	}
+
+	@Override
+	public int extractEnergy(int maxExtract, boolean simulate)
+	{
+		this.energyStored -= maxExtract;
+		return this.energyStored < maxExtract ? this.energyStored : maxExtract;
+	}
+
+	@Override
+	public int getEnergyStored()
+	{
+		return this.energyStored;
+	}
+
+	@Override
+	public int getMaxEnergyStored()
+	{
+		return this.maxEnergy;
+	}
+
+	@Override
+	public boolean canExtract()
+	{
+		return this.energyStored > 0;
+	}
+
+	@Override
+	public boolean canReceive()
+	{
+		return this.energyStored < this.maxEnergy;
 	}
 }

@@ -1,0 +1,20 @@
+{
+    "variants": {
+        "rotation=0": { "model": "farmutils:sprinkler_0" },
+        "rotation=1": { "model": "farmutils:sprinkler_1" },
+        "rotation=2": { "model": "farmutils:sprinkler_2" },
+        "rotation=3": { "model": "farmutils:sprinkler_3" },
+        "rotation=4": { "model": "farmutils:sprinkler_4" },
+        "rotation=5": { "model": "farmutils:sprinkler_5" },
+        "rotation=6": { "model": "farmutils:sprinkler_6" },
+        "rotation=7": { "model": "farmutils:sprinkler_7" },
+        "rotation=8": { "model": "farmutils:sprinkler_8" },
+        "rotation=9": { "model": "farmutils:sprinkler_9" },
+        "rotation=10": { "model": "farmutils:sprinkler_10" },
+        "rotation=11": { "model": "farmutils:sprinkler_11" },
+        "rotation=12": { "model": "farmutils:sprinkler_12" },
+        "rotation=13": { "model": "farmutils:sprinkler_13" },
+        "rotation=14": { "model": "farmutils:sprinkler_14" },
+        "rotation=15": { "model": "farmutils:sprinkler_15" }
+    }
+}

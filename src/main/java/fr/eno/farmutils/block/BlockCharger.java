@@ -2,6 +2,7 @@ package fr.eno.farmutils.block;
 
 import fr.eno.farmutils.FarmingUtilities;
 import fr.eno.farmutils.References;
+import fr.eno.farmutils.Tabs;
 import fr.eno.farmutils.tileentity.TileCharger;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -20,6 +21,7 @@ public class BlockCharger extends Block
 		super(Material.ROCK);
 		this.setRegistryName(References.MOD_ID, "charger");
 		this.setTranslationKey(this.getRegistryName().getPath());
+		this.setCreativeTab(Tabs.BLOCKS);
 	}
 	
 	@Override
@@ -41,6 +43,12 @@ public class BlockCharger extends Block
             return true;
         }
     }
+	
+	@Override
+	public boolean isOpaqueCube(IBlockState state)
+	{
+		return false;
+	}
 	
 	@Override
 	public TileEntity createTileEntity(World world, IBlockState state)

@@ -24,21 +24,23 @@ public class GuiCharger extends GuiContainer
 	public void drawScreen(int mouseX, int mouseY, float partialTicks)
 	{
 		super.drawScreen(mouseX, mouseY, partialTicks);
+		
+		int x = 7 + this.width / 2 - this.xSize / 2;
+		int y = 6 + this.height / 2 - this.ySize / 2;
+		
+		if (mouseX > x && mouseX < x + 18 && mouseY > y && mouseY < y + 70)
+		{
+			this.drawHoveringText("Photons : " + tileCharger.getField(0) + "/" + this.tileCharger.getField(1), mouseX, mouseY);
+		}
+		
+		this.renderHoveredToolTip(mouseX, mouseY);
 	}
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY)
 	{
 		String s = I18n.format("farmutils.title.charger");
-		this.fontRenderer.drawString(s, this.xSize / 2 - this.fontRenderer.getStringWidth(s) / 2, 6, 4210752);
-
-		int x = 7 + this.width / 2 - this.xSize / 2;
-		int y = 6 + this.height / 2 - this.ySize / 2;
-
-		if (mouseX > x && mouseX < x + 18 && mouseY > y && mouseY < y + 70)
-		{
-			this.drawHoveringText("Photons : " + tileCharger.getField(0) + "/" + this.tileCharger.getField(1), mouseX, mouseY);
-		}
+		this.fontRenderer.drawString(s, this.xSize / 2 - this.fontRenderer.getStringWidth(s) / 2, 6, 4210752);	
 	}
 
 	@Override

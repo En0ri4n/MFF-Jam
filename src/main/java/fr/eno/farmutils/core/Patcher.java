@@ -1,12 +1,12 @@
 package fr.eno.farmutils.core;
 
 import fr.eno.farmutils.EntityAIMoveToFeeder;
-import net.minecraft.entity.passive.EntityCow;
+import net.minecraft.entity.passive.EntityAnimal;
 
 public class Patcher
 {
-	public static void patchEntityCow(EntityCow cow)
+	public static void patchEntitiesAnimal(EntityAnimal animal)
 	{
-		cow.tasks.addTask(8, new EntityAIMoveToFeeder(cow, 1d));
+		animal.tasks.addTask(8, new EntityAIMoveToFeeder(animal, 1d));
 	}
 }

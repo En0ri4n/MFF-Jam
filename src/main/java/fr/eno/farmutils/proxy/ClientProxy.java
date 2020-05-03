@@ -1,5 +1,7 @@
 package fr.eno.farmutils.proxy;
 
+import fr.eno.farmutils.gui.GuiOverlayPoweredItem;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -21,6 +23,7 @@ public class ClientProxy extends CommonProxy
     public void init(FMLInitializationEvent e)
     {
         super.init(e);
+        MinecraftForge.EVENT_BUS.register(new GuiOverlayPoweredItem());
     }
 
     @Override

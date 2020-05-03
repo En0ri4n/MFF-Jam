@@ -1,5 +1,6 @@
 package fr.eno.farmutils.container;
 
+import fr.eno.farmutils.container.slot.SlotOnly;
 import fr.eno.farmutils.container.slot.SlotOutput;
 import fr.eno.farmutils.tileentity.TileCharger;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,7 +17,7 @@ public class ContainerCharger extends Container
     {
         this.chargerInventory = chargerInventory;
 
-        this.addSlotToContainer(new Slot(chargerInventory, 0, 46 + 8, 27 + 8));
+        this.addSlotToContainer(new SlotOnly(chargerInventory, 0, 46 + 8, 27 + 8));
         this.addSlotToContainer(new SlotOutput(chargerInventory, 1, 111 + 8, 27 + 8));
 
         for (int k = 0; k < 3; ++k)

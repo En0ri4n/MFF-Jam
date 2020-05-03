@@ -6,6 +6,7 @@ import java.util.List;
 
 import fr.eno.farmutils.References;
 import fr.eno.farmutils.items.ItemBlockBasic;
+import fr.eno.farmutils.items.ItemPoweredHoe;
 import fr.eno.farmutils.items.ItemWateringCan;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -24,7 +25,9 @@ public class InitItems
 	public static final ItemBlock BETTER_THAN_WATER_BLOCK = new ItemBlockBasic(InitBlocks.BETTER_THAN_WATER_BLOCK);
 	public static final ItemBlock CHARGER = new ItemBlockBasic(InitBlocks.CHARGER);
 	public static final ItemBlock FEEDER = new ItemBlockBasic(InitBlocks.FEEDER);
+	public static final ItemBlock SPRINKLER = new ItemBlockBasic(InitBlocks.SPRINKLER);
 	public static final Item WATERING_CAN = new ItemWateringCan();
+	public static final Item POWERED_HOE = new ItemPoweredHoe();
 	
 	private static void preInit()
 	{
@@ -33,7 +36,9 @@ public class InitItems
 				BETTER_THAN_WATER_BLOCK,
 				CHARGER,
 				FEEDER,
-				WATERING_CAN));
+				SPRINKLER,
+				WATERING_CAN,
+				POWERED_HOE));
 	}
 
 	@SubscribeEvent

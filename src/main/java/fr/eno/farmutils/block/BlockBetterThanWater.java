@@ -1,8 +1,10 @@
 package fr.eno.farmutils.block;
 
 import fr.eno.farmutils.References;
+import fr.eno.farmutils.Tabs;
 import fr.eno.farmutils.tileentity.TileBetterThanWater;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
@@ -17,9 +19,10 @@ public class BlockBetterThanWater extends Block
 
 	public BlockBetterThanWater()
 	{
-		super(Material.WATER);
+		super(new Material(MapColor.BLUE));
 		this.setRegistryName(References.MOD_ID, "better_than_water_block");
 		this.setTranslationKey(this.getRegistryName().getPath());
+		this.setCreativeTab(Tabs.BLOCKS);
 	}
 	
 	@Override

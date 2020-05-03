@@ -35,7 +35,7 @@ minecraft {
 
 jar {
     manifest {
-        attributes 'FMLCorePlugin': 'fr.eno.farmutils.core.CoreModPlugin', 'FMLCorePluginContainsFMLMod': 'true'//, 'FMLAT': 'pyrion_at.cfg'
+        attributes 'FMLCorePlugin': 'fr.eno.farmutils.core.CoreModPlugin', 'FMLCorePluginContainsFMLMod': 'true', 'FMLAT': 'farmutils_at.cfg'
     }
 }
 

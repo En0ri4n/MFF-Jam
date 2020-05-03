@@ -1,5 +1,7 @@
 package fr.eno.farmutils.items;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 import fr.eno.farmutils.References;
@@ -8,19 +10,21 @@ import net.minecraft.block.BlockCrops;
 import net.minecraft.block.BlockStem;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Mod;
 
@@ -30,35 +34,23 @@ public class ItemWateringCan extends Item
 	public ItemWateringCan()
 	{
 		this.setRegistryName(References.MOD_ID, "watering_can");
+		this.setTranslationKey(this.getRegistryName().getPath());
 		this.setCreativeTab(Tabs.ITEMS);
-		this.setMaxDamage(10);
-		this.setHasSubtypes(true);
 	}
 	
 	@Override
-	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items)
+	public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flagIn)
 	{
-		if(tab == this.getCreativeTab())
-		{
-			items.add(new ItemStack(this, 1, 0));
-		}
+		if(world != null && stack.hasTagCompound())
+			tooltip.add(TextFormatting.AQUA + "Water Level : " + stack.getTagCompound().getInteger("WaterLevel") + "/" + "10" + TextFormatting.RESET);
+		tooltip.addAll(Arrays.asList("Right click a crops to grow him, but when you are in water,",
+				"you don't need to recharge the watering can"));
 	}
 	
 	@Override
-	public String getTranslationKey(ItemStack stack)
+	public void onCreated(ItemStack stack, World worldIn, EntityPlayer playerIn)
 	{
-		String name = "";
-		switch(stack.getMetadata())
-		{
-			case 0:
-				name = "watering_can";
-				break;
-			case 1:
-				name = "broken_watering_can";
-				break;
-		}
-		
-		return "item." + name;
+		stack.setTagCompound(new NBTTagCompound());
 	}
 	
 	@Override
@@ -76,12 +68,24 @@ public class ItemWateringCan extends Item
 			}
 			else
 			{
-				if(stack.getMaxDamage() - stack.getItemDamage() <= 1)
+				NBTTagCompound nbt = stack.getTagCompound();
+				if(nbt == null)
 				{
-					player.setHeldItem(hand, new ItemStack(this, 1, 1));
+					nbt = new NBTTagCompound();
+					nbt.setInteger("WaterLevel", 9);
+				}
+				else if(nbt.getInteger("WaterLevel") > 0)
+				{
+					nbt.setInteger("WaterLevel", nbt.getInteger("WaterLevel") - 1);
 				}
 				
-				player.getHeldItem(hand).damageItem(1, player);
+				stack.setTagCompound(nbt);
+				
+				if(stack.getTagCompound().getInteger("WaterLevel") <= 0)
+				{
+					player.sendMessage(new TextComponentString(TextFormatting.RED + "You didn't have water in your watering can !"));
+				}
+				
 				growPlant(world, pos);
 				
 				return EnumActionResult.SUCCESS;
@@ -122,7 +126,12 @@ public class ItemWateringCan extends Item
                 {
                     world.playSound(player, player.posX, player.posY, player.posZ, SoundEvents.ITEM_BOTTLE_FILL, SoundCategory.NEUTRAL, 1.0F, 1.0F);
                     
-                    player.setHeldItem(hand, new ItemStack(this, 1, 0));
+                    ItemStack stack = player.getHeldItem(hand);
+                    
+                    NBTTagCompound nbt = stack.getTagCompound();
+                    if(nbt == null) nbt = new NBTTagCompound();
+                    nbt.setInteger("WaterLevel", 10);
+                    player.setHeldItem(hand, stack);
                     
                     return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemstack);
                 }

@@ -11,11 +11,9 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.IPlantable;
 
 public class TileBetterThanWater extends TileEntity implements ITickable
 {
-	private int tick = 0;
 	private Random random = new Random();
 	
 	public TileBetterThanWater() {}
@@ -28,8 +26,6 @@ public class TileBetterThanWater extends TileEntity implements ITickable
 	@Override
 	public void update()
 	{
-		tick++;
-		
 		BlockPos posi = this.getRandomFarmLandPos();
 		if(world.getBlockState(posi).getBlock() instanceof BlockFarmland)
 		{
@@ -38,28 +34,9 @@ public class TileBetterThanWater extends TileEntity implements ITickable
 				this.getWorld().setBlockState(posi, Blocks.FARMLAND.getDefaultState().withProperty(BlockFarmland.MOISTURE, Integer.valueOf(7)), 2);
 			}
 		}
-		
-		if(tick >= 1)
-		{
-			BlockPos pos = new BlockPos(0, 0, 0);
-			
-			pos = getRandomCropsPos();
-			
-			this.getWorld().scheduleUpdate(pos, this.getWorld().getBlockState(pos).getBlock(), 2);			
-			
-			tick = 0;
-		}
 	}
 	
-	private BlockPos getRandomCropsPos()
-	{
-		List<BlockPos> list = getCropsPos();
-		
-		if(!list.isEmpty() && list != null)
-			return list.get(random.nextInt(list.size() - 1));
-		
-		return new BlockPos(0, 0, 0);
-	}
+	
 	
 	private BlockPos getRandomFarmLandPos()
 	{
@@ -87,20 +64,5 @@ public class TileBetterThanWater extends TileEntity implements ITickable
 		});
 		
 		return list;
-	}
-	
-	private List<BlockPos> getCropsPos()
-	{
-		List<BlockPos> pos = new ArrayList<BlockPos>();
-		
-		for(BlockPos positions : this.getFarmsLandPos())
-		{
-			if(this.getWorld().getBlockState(positions.up()).getBlock() instanceof IPlantable)
-			{
-				pos.add(positions.up());
-			}
-		}
-		
-		return pos;
 	}
 }

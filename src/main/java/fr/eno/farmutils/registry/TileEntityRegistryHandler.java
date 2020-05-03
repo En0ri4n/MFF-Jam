@@ -6,6 +6,7 @@ import fr.eno.farmutils.tileentity.TileBreeder;
 import fr.eno.farmutils.tileentity.TileCharger;
 import fr.eno.farmutils.tileentity.TileFeeder;
 import fr.eno.farmutils.tileentity.TileMilker;
+import fr.eno.farmutils.tileentity.TileSprinkler;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
@@ -18,6 +19,7 @@ public class TileEntityRegistryHandler
 		GameRegistry.registerTileEntity(TileBetterThanWater.class, getLoc("better_than_water"));
 		GameRegistry.registerTileEntity(TileCharger.class, getLoc("charger"));
 		GameRegistry.registerTileEntity(TileFeeder.class, getLoc("feeder"));
+		GameRegistry.registerTileEntity(TileSprinkler.class, getLoc("sprinkler"));
 	}
 	
 	private static ResourceLocation getLoc(String path)

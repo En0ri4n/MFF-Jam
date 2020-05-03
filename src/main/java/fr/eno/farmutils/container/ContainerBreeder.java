@@ -16,7 +16,7 @@ public class ContainerBreeder extends Container
 
         for (int i = 0; i < 9; ++i)
         {
-        	this.addSlotToContainer(new Slot(breederInventory, i, 26 + i * 18, 35 + i * 18));
+        	this.addSlotToContainer(new Slot(breederInventory, i, 8 + i * 18, 35));
         }
 
         for (int k = 0; k < 3; ++k)

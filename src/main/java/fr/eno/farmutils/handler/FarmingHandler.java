@@ -3,6 +3,8 @@ package fr.eno.farmutils.handler;
 import java.util.Random;
 
 import fr.eno.farmutils.References;
+import fr.eno.farmutils.items.ItemEnergyStorage;
+import fr.eno.farmutils.items.ItemPoweredHoe;
 import net.minecraft.block.BlockCrops;
 import net.minecraft.block.BlockStem;
 import net.minecraft.entity.item.EntityItem;
@@ -22,14 +24,20 @@ public class FarmingHandler
 	@SubscribeEvent
 	public static void onSeedClicked(BlockEvent.BreakEvent event)
 	{
-		if(event.getState().getBlock() instanceof IPlantable && !(event.getState().getBlock() instanceof BlockStem) && !event.getWorld().isRemote && event.getPlayer().getHeldItemMainhand().getItem() instanceof ItemHoe)
+		if(event.getState().getBlock() instanceof IPlantable && !(event.getState().getBlock() instanceof BlockStem) && !event.getWorld().isRemote && event.getPlayer().getHeldItemMainhand().getItem() instanceof ItemHoe || event.getPlayer().getHeldItemMainhand().getItem() instanceof ItemPoweredHoe)
 		{
 			event.setCanceled(true);
+			
+			ItemStack stack = event.getPlayer().getHeldItemMainhand();
 			
 			boolean isGrowed = event.getState().getValue(BlockCrops.AGE).intValue() >= 7;
 			
 			if(isGrowed)
 			{
+				if(stack.getItem() instanceof ItemPoweredHoe)
+					if(((ItemEnergyStorage) stack.getItem()).getEnergyStored() <= 0)
+						return;
+				
 				World world = event.getWorld();
 				BlockPos pos = event.getPos();
 				
@@ -47,7 +55,10 @@ public class FarmingHandler
 					event.getWorld().spawnEntity(item);
 				});
 				
-				event.getPlayer().getHeldItemMainhand().damageItem(1, event.getPlayer());
+				if(stack.getItem() instanceof ItemPoweredHoe)
+					((ItemEnergyStorage) stack.getItem()).extractEnergy(1, false);
+				else
+					stack.damageItem(1, event.getPlayer());
 			}
 		}
 	}
